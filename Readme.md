@@ -7,6 +7,12 @@ Official Torch implementation can be found [here](https://github.com/Yijunmaveri
 ## Prerequisites
 - [Pytorch](http://pytorch.org/)
 - [torchvision](https://github.com/pytorch/vision)
+Install with:
+
+```bash
+ pip install torch===1.4.0 torchvision===0.5.0 -f https://download.pytorch.org/whl/torch_stable.html
+ ```
+
 - Pretrained encoder and decoder [models](https://drive.google.com/file/d/1M5KBPfqrIUZqrBZf78CIxLrMUT4lD4t9/view?usp=sharing) for image reconstruction only (download and uncompress them under models/)
 - CUDA + CuDNN
 
