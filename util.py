@@ -1,6 +1,7 @@
 from __future__ import division
 import torch
-from torch.utils.serialization import load_lua
+import torchfile
+# from torch.utils.serialization import load_lua
 import torchvision.transforms as transforms
 import numpy as np
 import argparse
@@ -17,16 +18,16 @@ class WCT(nn.Module):
     def __init__(self,args):
         super(WCT, self).__init__()
         # load pre-trained network
-        vgg1 = load_lua(args.vgg1)
-        decoder1_torch = load_lua(args.decoder1)
-        vgg2 = load_lua(args.vgg2)
-        decoder2_torch = load_lua(args.decoder2)
-        vgg3 = load_lua(args.vgg3)
-        decoder3_torch = load_lua(args.decoder3)
-        vgg4 = load_lua(args.vgg4)
-        decoder4_torch = load_lua(args.decoder4)
-        vgg5 = load_lua(args.vgg5)
-        decoder5_torch = load_lua(args.decoder5)
+        vgg1 = torchfile.load(args.vgg1)
+        decoder1_torch = torchfile.load(args.decoder1)
+        vgg2 = torchfile.load(args.vgg2)
+        decoder2_torch = torchfile.load(args.decoder2)
+        vgg3 = torchfile.load(args.vgg3)
+        decoder3_torch = torchfile.load(args.decoder3)
+        vgg4 = torchfile.load(args.vgg4)
+        decoder4_torch = torchfile.load(args.decoder4)
+        vgg5 = torchfile.load(args.vgg5)
+        decoder5_torch = torchfile.load(args.decoder5)
 
 
         self.e1 = encoder1(vgg1)
