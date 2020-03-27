@@ -1,6 +1,6 @@
 from __future__ import division
 import torch
-import torchfile
+# import torchfile
 # from torch.utils.serialization import load_lua
 import torchvision.transforms as transforms
 import numpy as np
@@ -11,6 +11,10 @@ from PIL import Image
 from modelsNIPS import decoder1,decoder2,decoder3,decoder4,decoder5
 from modelsNIPS import encoder1,encoder2,encoder3,encoder4,encoder5
 import torch.nn as nn
+from models import feature_invertor_conv1_1, feature_invertor_conv2_1, \
+    feature_invertor_conv3_1, feature_invertor_conv4_1, feature_invertor_conv5_1, \
+    vgg_normalised_conv1_1, vgg_normalised_conv2_1, vgg_normalised_conv3_1, \
+    vgg_normalised_conv4_1, vgg_normalised_conv5_1
 
 
 
@@ -18,17 +22,60 @@ class WCT(nn.Module):
     def __init__(self,args):
         super(WCT, self).__init__()
         # load pre-trained network
-        vgg1 = torchfile.load(args.vgg1)
-        decoder1_torch = torchfile.load(args.decoder1)
-        vgg2 = torchfile.load(args.vgg2)
-        decoder2_torch = torchfile.load(args.decoder2)
-        vgg3 = torchfile.load(args.vgg3)
-        decoder3_torch = torchfile.load(args.decoder3)
-        vgg4 = torchfile.load(args.vgg4)
-        decoder4_torch = torchfile.load(args.decoder4)
-        vgg5 = torchfile.load(args.vgg5)
-        decoder5_torch = torchfile.load(args.decoder5)
+        vgg1 = vgg_normalised_conv1_1.vgg_normalised_conv1_1
+        vgg1.load_state_dict(torch.load(args.vgg1))
 
+
+        decoder1_torch = feature_invertor_conv1_1.feature_invertor_conv1_1
+        decoder1_torch.load_state_dict(torch.load(args.decoder1))
+
+
+        vgg2 = vgg_normalised_conv2_1.vgg_normalised_conv2_1
+        vgg2.load_state_dict(torch.load(args.vgg2))
+
+        decoder2_torch = feature_invertor_conv2_1.feature_invertor_conv2_1
+        decoder2_torch.load_state_dict(torch.load(args.decoder2))
+
+        vgg3 = vgg_normalised_conv3_1.vgg_normalised_conv3_1
+        vgg3.load_state_dict(torch.load(args.vgg3))
+
+        decoder3_torch = feature_invertor_conv3_1.feature_invertor_conv3_1
+        decoder3_torch.load_state_dict(torch.load(args.decoder3))
+
+        vgg4 = vgg_normalised_conv4_1.vgg_normalised_conv4_1
+        vgg4.load_state_dict(torch.load(args.vgg4))
+
+        decoder4_torch = feature_invertor_conv4_1.feature_invertor_conv4_1
+        decoder4_torch.load_state_dict(torch.load(args.decoder4))
+
+        vgg5 = vgg_normalised_conv5_1.vgg_normalised_conv5_1
+        vgg5.load_state_dict(torch.load(args.vgg5))
+
+        decoder5_torch = feature_invertor_conv5_1.feature_invertor_conv5_1
+        decoder5_torch.load_state_dict(torch.load(args.decoder5))
+
+        # vgg1.eval()
+        # decoder1_torch.eval()
+        # vgg2.eval()
+        # decoder2_torch.eval()
+        # vgg3.eval()
+        # decoder3_torch.eval()
+        # vgg4.eval()
+        # decoder4_torch.eval()
+        # vgg5.eval()
+        # decoder5_torch.eval()
+
+        # decoder1_torch = torchfile.load(args.decoder1, force_8bytes_long=True)
+        # vgg2 = torchfile.load(args.vgg2, force_8bytes_long=True)
+        # decoder2_torch = torchfile.load(args.decoder2, force_8bytes_long=True)
+        # vgg3 = torchfile.load(args.vgg3, force_8bytes_long=True)
+        # decoder3_torch = torchfile.load(args.decoder3, force_8bytes_long=True)
+        # vgg4 = torchfile.load(args.vgg4, force_8bytes_long=True)
+        # decoder4_torch = torchfile.load(args.decoder4, force_8bytes_long=True)
+        # vgg5 = torchfile.load(args.vgg5, force_8bytes_long=True)
+        # decoder5_torch = torchfile.load(args.decoder5, force_8bytes_long=True)
+
+        # print(vgg1.modules[0].weight.float())
 
         self.e1 = encoder1(vgg1)
         self.d1 = decoder1(decoder1_torch)
@@ -90,5 +137,6 @@ class WCT(nn.Module):
         targetFeature = targetFeature.view_as(cF)
         ccsF = alpha * targetFeature + (1.0 - alpha) * cF
         ccsF = ccsF.float().unsqueeze(0)
-        csF.data.resize_(ccsF.size()).copy_(ccsF)
+        with torch.no_grad():
+            csF.resize_(ccsF.size()).copy_(ccsF)
         return csF
